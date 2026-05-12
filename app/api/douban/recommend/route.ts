@@ -17,7 +17,7 @@ export async function GET(request: Request) {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
         'Referer': 'https://movie.douban.com/',
       },
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      // Note: next: { revalidate } not supported in Cloudflare Workers
     });
 
     if (!response.ok) {

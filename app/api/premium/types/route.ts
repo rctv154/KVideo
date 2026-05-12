@@ -35,7 +35,7 @@ async function handleTypesRequest(sourceList: any[]) {
                         headers: {
                             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
                         },
-                        next: { revalidate: 3600 }
+                        // Note: next: { revalidate } not supported in Cloudflare Workers
                     });
 
                     clearTimeout(timeoutId);
@@ -141,7 +141,7 @@ async function handleTypesRequest(sourceList: any[]) {
             if (cat.values.length === 0) return;
 
             // Create a unique ID based on the label (using base64 to be safe)
-            const id = Buffer.from(cat.label).toString('base64');
+            const id = btoa(encodeURIComponent(cat.label)); // btoa is Web standard, works in Cloudflare Workers
 
             allTags.push({
                 id,

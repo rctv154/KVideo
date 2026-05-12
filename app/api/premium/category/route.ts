@@ -61,7 +61,7 @@ async function handleCategoryRequest(
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
                     },
-                    next: { revalidate: 1800 },
+                    // Note: next: { revalidate } not supported in Cloudflare Workers
                 });
 
                 clearTimeout(timeoutId);
