@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === 'production',
   },
 
-  output: 'standalone',
-  outputFileTracingRoot: __dirname,
+  // Note: output: 'standalone' is removed - not compatible with Cloudflare Workers
+  // OpenNext handles the output format automatically
   turbopack: {
     root: __dirname,
   },
