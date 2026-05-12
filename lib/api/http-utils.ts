@@ -3,8 +3,8 @@
  * Handles timeouts and retries
  */
 
-// Disable SSL verification for video sources with invalid certificates
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// Note: NODE_TLS_REJECT_UNAUTHORIZED is not needed in Cloudflare Workers
+// Cloudflare handles TLS at the network level
 
 const REQUEST_TIMEOUT = 15000;
 const MAX_RETRIES = 3;
