@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { PREMIUM_SOURCES } from '@/lib/api/premium-sources';
 
-export const runtime = 'edge';
+
 
 export const revalidate = 3600; // Cache for 1 hour
 

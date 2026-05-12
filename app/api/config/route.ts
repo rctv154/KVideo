@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
+
 
 const ACCESS_PASSWORD = process.env.ACCESS_PASSWORD || '';
 const PERSIST_PASSWORD = process.env.PERSIST_PASSWORD !== 'false';
