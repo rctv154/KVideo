@@ -131,6 +131,57 @@ export function ItemListJsonLd({ name, items }: { name: string; items: ItemListE
   return <JsonLdScript id="ld-itemlist" data={data} />;
 }
 
+export interface MovieSchemaData {
+  name: string;
+  description?: string;
+  image?: string;
+  dateCreated?: string;
+  director?: string[];
+  actor?: string[];
+  genre?: string[];
+  aggregateRating?: { ratingValue: string; ratingCount?: number };
+  url: string;
+}
+
+/**
+ * Movie/TVSeries structured data for /movies/[id] detail pages.
+ * Only includes fields we actually have from Douban's public API.
+ * This helps Google show rich cards (rating stars, release year) in search results.
+ */
+export function MovieJsonLd({ data, isTv }: { data: MovieSchemaData; isTv?: boolean }) {
+  const schema: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': isTv ? 'TVSeries' : 'Movie',
+    name: data.name,
+    url: data.url,
+    ...(data.description ? { description: data.description } : {}),
+    ...(data.image ? { image: data.image } : {}),
+    ...(data.dateCreated ? { dateCreated: data.dateCreated } : {}),
+    ...(data.director?.length
+      ? { director: data.director.map((n) => ({ '@type': 'Person', name: n })) }
+      : {}),
+    ...(data.actor?.length
+      ? { actor: data.actor.map((n) => ({ '@type': 'Person', name: n })) }
+      : {}),
+    ...(data.genre?.length ? { genre: data.genre } : {}),
+    ...(data.aggregateRating
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: data.aggregateRating.ratingValue,
+            bestRating: '10',
+            worstRating: '1',
+            ...(data.aggregateRating.ratingCount
+              ? { ratingCount: data.aggregateRating.ratingCount }
+              : {}),
+          },
+        }
+      : {}),
+  };
+
+  return <JsonLdScript id="ld-movie" data={schema} />;
+}
+
 /** BreadcrumbList schema for secondary pages, improves rich result display. */
 export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string }[] }) {
   const data = {

@@ -57,7 +57,7 @@ export default async function MoviesPage() {
     const allItems: ItemListEntry[] = sections.flatMap((section) =>
         section.items.map((item) => ({
             name: item.title,
-            url: `${siteConfig.url}/?q=${encodeURIComponent(item.title)}`,
+            url: `${siteConfig.url}/movies/${item.id}`,
             image: item.cover ? `${siteConfig.url}${item.cover}` : undefined,
         }))
     );
@@ -94,7 +94,7 @@ export default async function MoviesPage() {
                                 {section.items.map((item) => (
                                     <Link
                                         key={`${section.heading}-${item.id}`}
-                                        href={`/?q=${encodeURIComponent(item.title)}`}
+                                        href={`/movies/${item.id}`}
                                         className="group"
                                     >
                                         <div className="relative aspect-[2/3] rounded-[var(--radius-2xl)] overflow-hidden bg-[var(--glass-bg)] border border-[var(--glass-border)]">
