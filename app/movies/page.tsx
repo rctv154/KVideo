@@ -6,6 +6,10 @@ import { Footer } from '@/components/layout/Footer';
 import { ItemListJsonLd, BreadcrumbJsonLd, type ItemListEntry } from '@/components/seo/StructuredData';
 import { fetchDoubanSubjects, type DoubanSubject } from '@/lib/api/douban-server';
 import { siteConfig } from '@/lib/config/site-config';
+import popularMovies from '@/lib/data/popular-movies.json';
+
+// Popular genre shortcuts to show on the hub page — 8 most common genres
+const TOP_GENRES = ['剧情', '喜剧', '爱情', '动作', '科幻', '悬疑', '动画', '惊悚'] as const;
 
 // Douban's "热门" list changes daily - always render fresh on request so
 // this stays real, current content instead of a stale build-time snapshot.
@@ -75,13 +79,41 @@ export default async function MoviesPage() {
             <ContentHeader />
 
             <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-                <header className="text-center mb-10">
+                <header className="text-center mb-6">
                     <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text-color)]">热门电影电视剧推荐</h1>
                     <p className="mt-3 max-w-2xl mx-auto text-[var(--text-color-secondary)] leading-relaxed">
                         以下榜单实时同步豆瓣热门与高分数据，覆盖热门电影、豆瓣高分电影、热门电视剧与综艺。点击任意标题，
                         即可在 {siteConfig.name} 免费高清多源搜索并在线观看。
                     </p>
                 </header>
+
+                {/* Genre quick-links — internal linking hub to genre pages */}
+                <nav aria-label="影视分类" className="flex flex-wrap justify-center gap-2 mb-10">
+                    {TOP_GENRES.map((g) => {
+                        const count = popularMovies.filter((m) => m.genres.includes(g)).length;
+                        return count > 0 ? (
+                            <Link
+                                key={g}
+                                href={`/movies/genre/${encodeURIComponent(g)}`}
+                                className="px-4 py-1.5 rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-sm text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)] transition-colors"
+                            >
+                                {g} <span className="text-xs opacity-60">({count})</span>
+                            </Link>
+                        ) : null;
+                    })}
+                    <Link
+                        href="/movies/year/2026"
+                        className="px-4 py-1.5 rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-sm text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)] transition-colors"
+                    >
+                        2026年新片
+                    </Link>
+                    <Link
+                        href="/movies/year/2024"
+                        className="px-4 py-1.5 rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-sm text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] hover:border-[var(--accent-color)] transition-colors"
+                    >
+                        2024年
+                    </Link>
+                </nav>
 
                 <div className="space-y-12">
                     {sections.map((section) => (

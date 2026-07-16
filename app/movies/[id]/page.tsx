@@ -15,13 +15,20 @@ import popularMovies from '@/lib/data/popular-movies.json';
 type MovieEntry = (typeof popularMovies)[number];
 
 /** O(1) lookup map built once at import time */
-const movieMap = new Map<string, MovieEntry>(
-    popularMovies.map((m) => [m.id, m])
-);
+const movieMap = new Map<string, MovieEntry>(popularMovies.map((m) => [m.id, m]));
 
-// Pre-generate a static page for every movie in the JSON.
-// The JSON is created/updated by the prebuild script (scripts/fetch-popular-movies.mjs)
-// so the Next.js build itself makes zero outbound Douban API calls.
+/**
+ * Return up to `limit` movies that share at least one genre with `movie`,
+ * excluding itself, sorted by rating desc.
+ */
+function getRelated(movie: MovieEntry, limit = 6): MovieEntry[] {
+    const genres = new Set(movie.genres);
+    return popularMovies
+        .filter((m) => m.id !== movie.id && m.genres.some((g) => genres.has(g)))
+        .sort((a, b) => parseFloat(b.rate || '0') - parseFloat(a.rate || '0'))
+        .slice(0, limit);
+}
+
 export async function generateStaticParams() {
     return popularMovies.map((m) => ({ id: m.id }));
 }
@@ -33,21 +40,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
     const { id } = await params;
     const movie = movieMap.get(id);
-
     if (!movie?.titleShort) {
         return { title: '影视详情', robots: { index: false, follow: false } };
     }
 
     const t = movie.titleShort;
-    const year = movie.releaseYear ? `(${movie.releaseYear})` : '';
-    const genres = movie.genres.slice(0, 2).join('·');
+    const yr = movie.releaseYear;
+    const genreStr = movie.genres.slice(0, 2).join('·');
+    const typeWord = movie.isTv ? '全集' : '完整版';
 
-    const titleTag = `《${t}》${year}在线观看免费高清${genres ? ' ' + genres : ''} - ${siteConfig.name}`;
+    // Title: 《Title》免费在线观看完整版 2024年 类型·类型 - VV影视
+    const titleTag = `《${t}》免费在线观看${typeWord}${yr ? ` ${yr}年` : ''}${genreStr ? ` ${genreStr}` : ''} - ${siteConfig.name}`;
+
+    // Description: natural, keyword-rich, includes actors/directors/rating
+    const descParts: string[] = [];
+    if (movie.directors.length) descParts.push(`由${movie.directors.slice(0, 2).join('、')}执导`);
+    if (movie.actors.length) descParts.push(`${movie.actors.slice(0, 3).join('、')}主演`);
+    const intro = descParts.length ? `《${t}》${descParts.join('，')}。` : `《${t}》`;
     const descTag =
-        `在${siteConfig.name}免费搜索《${t}》${year}高清资源并在线观看。` +
-        (movie.directors.length ? `导演：${movie.directors.slice(0, 2).join('、')}。` : '') +
-        (movie.actors.length ? `主演：${movie.actors.slice(0, 3).join('、')}。` : '') +
-        (movie.rate ? `豆瓣评分 ${movie.rate}。` : '') +
+        `${intro}` +
+        `在${siteConfig.name}免费高清在线观看《${t}》${typeWord}` +
+        `${yr ? `，${yr}年` : ''}${genreStr ? `${genreStr}` : ''}` +
+        `${movie.rate ? `，豆瓣评分${movie.rate}分` : ''}。` +
         `多源并行搜索，即找即看，内置智能去广告。`;
 
     return {
@@ -58,9 +72,7 @@ export async function generateMetadata({
             title: titleTag,
             description: descTag,
             url: `${siteConfig.url}/movies/${id}`,
-            ...(movie.cover
-                ? { images: [{ url: `${siteConfig.url}${movie.cover}`, alt: t }] }
-                : {}),
+            ...(movie.cover ? { images: [{ url: `${siteConfig.url}${movie.cover}`, alt: t }] } : {}),
         },
         robots: { index: true, follow: true },
     };
@@ -73,26 +85,15 @@ export default async function MovieDetailPage({
 }) {
     const { id } = await params;
     const movie = movieMap.get(id);
-
-    if (!movie?.titleShort) {
-        notFound();
-    }
+    if (!movie?.titleShort) notFound();
 
     const {
-        titleShort,
-        titleFull,
-        rate,
-        cover,
-        releaseYear,
-        region,
-        duration,
-        directors,
-        actors,
-        genres,
-        isTv,
-        shortComment,
-        doubanUrl,
+        titleShort, titleFull, rate, cover, releaseYear, region,
+        duration, directors, actors, genres, isTv, shortComment, doubanUrl,
     } = movie;
+
+    const related = getRelated(movie);
+    const typeWord = isTv ? '全集' : '完整版';
 
     const schemaData: MovieSchemaData = {
         name: titleShort,
@@ -122,7 +123,8 @@ export default async function MovieDetailPage({
 
             <ContentHeader />
 
-            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+                {/* Main info card */}
                 <article className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] overflow-hidden">
                     <div className="flex flex-col sm:flex-row gap-6 p-6 sm:p-8">
                         {/* Poster */}
@@ -157,7 +159,7 @@ export default async function MovieDetailPage({
                             </header>
 
                             {/* Rating + meta */}
-                            <div className="flex flex-wrap items-center gap-3">
+                            <div className="flex flex-wrap items-center gap-2">
                                 {rate && parseFloat(rate) > 0 && (
                                     <div className="flex items-center gap-1.5 bg-yellow-400/10 border border-yellow-400/20 px-3 py-1 rounded-[var(--radius-full)]">
                                         <span className="text-yellow-500 text-sm">★</span>
@@ -169,6 +171,29 @@ export default async function MovieDetailPage({
                                     <span className="text-sm text-[var(--text-color-secondary)]">{metaLine}</span>
                                 )}
                             </div>
+
+                            {/* Genre tags → link to genre pages */}
+                            {genres.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5">
+                                    {genres.map((g) => (
+                                        <Link
+                                            key={g}
+                                            href={`/movies/genre/${encodeURIComponent(g)}`}
+                                            className="text-xs px-2.5 py-1 rounded-[var(--radius-full)] bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] border border-[color-mix(in_srgb,var(--accent-color)_20%,transparent)] text-[var(--accent-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_20%,transparent)] transition-colors"
+                                        >
+                                            {g}
+                                        </Link>
+                                    ))}
+                                    {releaseYear && (
+                                        <Link
+                                            href={`/movies/year/${releaseYear}`}
+                                            className="text-xs px-2.5 py-1 rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-[var(--text-color-secondary)] hover:text-[var(--accent-color)] transition-colors"
+                                        >
+                                            {releaseYear}年
+                                        </Link>
+                                    )}
+                                </div>
+                            )}
 
                             {directors.length > 0 && (
                                 <div className="text-sm">
@@ -200,7 +225,7 @@ export default async function MovieDetailPage({
                             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M8 5v14l11-7z" />
                             </svg>
-                            免费在线观看《{titleShort}》
+                            免费在线观看《{titleShort}》{typeWord}
                         </Link>
                         <a
                             href={doubanUrl}
@@ -224,6 +249,50 @@ export default async function MovieDetailPage({
                         <Link href="/movies" className="underline hover:text-[var(--accent-color)]">热门影视榜单</Link>。
                     </div>
                 </article>
+
+                {/* Related recommendations — internal linking network */}
+                {related.length > 0 && (
+                    <section>
+                        <h2 className="text-lg font-semibold text-[var(--text-color)] mb-4">
+                            同类型推荐 · {genres[0] ?? ''}
+                        </h2>
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                            {related.map((rel) => (
+                                <Link key={rel.id} href={`/movies/${rel.id}`} className="group">
+                                    <div className="relative aspect-[2/3] rounded-[var(--radius-2xl)] overflow-hidden bg-[var(--glass-bg)] border border-[var(--glass-border)]">
+                                        <Image
+                                            src={rel.cover || '/placeholder-poster.svg'}
+                                            alt={rel.titleShort}
+                                            fill
+                                            unoptimized
+                                            referrerPolicy="no-referrer"
+                                            sizes="(max-width: 640px) 33vw, 16vw"
+                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        {rel.rate && parseFloat(rel.rate) > 0 && (
+                                            <div className="absolute top-1.5 right-1.5 bg-black/80 px-1.5 py-0.5 rounded-[var(--radius-full)] text-xs font-bold text-white">
+                                                ★ {rel.rate}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="mt-1.5 text-xs text-center text-[var(--text-color)] line-clamp-2 group-hover:text-[var(--accent-color)] transition-colors">
+                                        {rel.titleShort}
+                                    </p>
+                                </Link>
+                            ))}
+                        </div>
+                        {genres[0] && (
+                            <div className="mt-4 text-center">
+                                <Link
+                                    href={`/movies/genre/${encodeURIComponent(genres[0])}`}
+                                    className="text-sm text-[var(--accent-color)] underline"
+                                >
+                                    查看全部{genres[0]}影视 →
+                                </Link>
+                            </div>
+                        )}
+                    </section>
+                )}
             </main>
 
             <Footer />
