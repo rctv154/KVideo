@@ -1,10 +1,10 @@
-# 视频聚合平台 (KVideo)
+# VV影视 (VVideo)
 
-![KVideo Banner](public/icon.png)
+![VV影视 Banner](public/icon.png)
 
-> 一个基于 Next.js 16 构建的现代化视频聚合播放平台。采用独特的 "Liquid Glass" 设计语言，提供流畅的视觉体验和强大的视频搜索功能。
+> 一个基于 Next.js 16 构建的现代化免费影视聚合搜索与播放平台。采用独特的 "Liquid Glass" 设计语言，提供流畅的视觉体验和强大的多源影视搜索功能。项目原名 KVideo，代码库地址保持不变。
 
-**🌐 在线体验：[https://kvideo.pages.dev/](https://kvideo.pages.dev/)**
+**🌐 在线体验：[https://vv19.com/](https://vv19.com/)**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19.2-blue?style=for-the-badge&logo=react)](https://react.dev/)
@@ -150,10 +150,18 @@ docker run -d -p 3000:3000 -e ACCESS_PASSWORD=your_premium_password --name kvide
 
 | 变量名 | 说明 | 默认值 |
 |--------|------|--------|
-| `NEXT_PUBLIC_SITE_TITLE` | 浏览器标签页标题 | `视频聚合平台 - KVideo` |
-| `NEXT_PUBLIC_SITE_DESCRIPTION` | 站点描述 | `专属视频聚合播放平台，具备美观的 Liquid Glass UI` |
-| `NEXT_PUBLIC_SITE_NAME` | 站点头部名称 | `视频聚合平台` |
+| `NEXT_PUBLIC_SITE_NAME` | 站点头部名称（中文品牌名） | `VV影视` |
+| `NEXT_PUBLIC_SITE_NAME_EN` | 英文/品牌代号，用于结构化数据与部分文案 | `VVideo` |
+| `NEXT_PUBLIC_SITE_TITLE` | 浏览器标签页标题（`<title>`） | `VV影视 (VVideo) - 免费在线电影电视剧多源聚合搜索平台` |
+| `NEXT_PUBLIC_SITE_DESCRIPTION` | SEO 描述（`meta description`） | 见 `lib/config/site-config.ts` |
+| `NEXT_PUBLIC_SITE_TAGLINE` | 导航栏副标题 / 首页一句话简介 | `免费多源影视聚合搜索，海量电影电视剧一搜即得` |
+| `NEXT_PUBLIC_SITE_KEYWORDS` | SEO 关键词，逗号分隔 | 见 `lib/config/site-config.ts` |
+| `NEXT_PUBLIC_SITE_URL` | 规范站点域名（用于 canonical / sitemap / OG，末尾不要带 `/`） | `https://vv19.com` |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console 站点验证码 | 空 |
+| `NEXT_PUBLIC_BAIDU_SITE_VERIFICATION` | 百度站长平台站点验证码 | 空 |
 | `PERSIST_PASSWORD` | 密码持久化 | `true` |
+
+> 部署到自己的域名时，请务必设置 `NEXT_PUBLIC_SITE_URL` 为你自己的域名，否则 sitemap、canonical、OpenGraph 链接会指向默认域名。
 
 ### 配置示例：
 

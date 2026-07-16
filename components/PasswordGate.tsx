@@ -153,7 +153,17 @@ export function PasswordGate({ children, hasEnvPassword: initialHasEnvPassword }
         setTimeout(() => form?.classList.remove('animate-shake'), 500);
     };
 
-    if (!isClient) return null; // Prevent hydration mismatch
+    if (!isClient) {
+        // SEO/GEO: when no server-known (env var) password is configured, there is
+        // nothing to protect on this request, so render children immediately during
+        // SSR instead of an empty shell - this is what lets search engines and
+        // AI crawlers (most of which don't execute JavaScript) see real page content.
+        // If the user has only enabled a *local* (client-side only) password on this
+        // device, the lock screen still takes over as soon as `isClient` resolves,
+        // since that state can't be known on the server anyway.
+        if (!initialHasEnvPassword) return <>{children}</>;
+        return null; // Prevent hydration mismatch while env-protected lock state resolves
+    }
 
     if (!isLocked) {
         return <>{children}</>;

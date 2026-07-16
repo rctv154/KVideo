@@ -8,8 +8,10 @@ import { WatchHistorySidebar } from '@/components/history/WatchHistorySidebar';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
 import { Navbar } from '@/components/layout/Navbar';
 import { SearchResults } from '@/components/home/SearchResults';
+import { Footer } from '@/components/layout/Footer';
 import { useHomePage } from '@/lib/hooks/useHomePage';
 import { useLatencyPing } from '@/lib/hooks/useLatencyPing';
+import { siteConfig } from '@/lib/config/site-config';
 
 function HomePage() {
   const {
@@ -86,14 +88,37 @@ function HomePage() {
   );
 }
 
+/**
+ * SEO / GEO note: `HomePage` uses `useSearchParams()`, which forces the
+ * Suspense boundary below into a client-rendered "hole" - none of its
+ * content ends up in the static/prerendered HTML that non-JS crawlers
+ * (most AI answer-engine bots) receive. The heading, intro copy and
+ * footer below are rendered here, *outside* the Suspense boundary, so
+ * they remain fully static and crawlable regardless of JavaScript
+ * execution, while the interactive search UI still streams in for
+ * real users and JS-executing crawlers (Googlebot, Bingbot, etc.).
+ */
 export default function Home() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent"></div>
+    <div className="min-h-screen">
+      <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-8 text-center">
+        <h1 className="text-xl sm:text-2xl font-bold text-[var(--text-color)]">
+          {siteConfig.name} <span className="text-[var(--text-color-secondary)] font-normal">（{siteConfig.englishName}）</span> · 免费多源影视聚合搜索
+        </h1>
+        <p className="mt-1 text-sm text-[var(--text-color-secondary)]">
+          汇聚全网免费电影、电视剧、动漫、综艺资源，多源并行搜索，即搜即看，支持自定义视频源与订阅源管理。
+        </p>
       </div>
-    }>
-      <HomePage />
-    </Suspense>
+
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent"></div>
+        </div>
+      }>
+        <HomePage />
+      </Suspense>
+
+      <Footer />
+    </div>
   );
 }

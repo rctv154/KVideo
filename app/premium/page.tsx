@@ -8,6 +8,8 @@ import { SearchResults } from '@/components/home/SearchResults';
 import { usePremiumHomePage } from '@/lib/hooks/usePremiumHomePage';
 import { PremiumContent } from '@/components/premium/PremiumContent';
 import { FavoritesSidebar } from '@/components/favorites/FavoritesSidebar';
+import { Footer } from '@/components/layout/Footer';
+import { siteConfig } from '@/lib/config/site-config';
 
 function PremiumHomePage() {
     const {
@@ -73,14 +75,32 @@ function PremiumHomePage() {
     );
 }
 
+/**
+ * SEO / GEO note: see the equivalent comment in app/page.tsx - the heading,
+ * intro copy and footer are rendered outside the Suspense boundary so they
+ * remain fully static and crawlable even for bots that don't execute JS.
+ */
 export default function PremiumPage() {
     return (
-        <Suspense fallback={
-            <div className="min-h-screen flex items-center justify-center bg-black">
-                <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent"></div>
+        <div className="min-h-screen bg-black">
+            <div className="max-w-3xl mx-auto px-4 pt-6 sm:pt-8 text-center">
+                <h1 className="text-xl sm:text-2xl font-bold text-white">
+                    {siteConfig.name} 高级专区 · 高级影视资源搜索
+                </h1>
+                <p className="mt-1 text-sm text-[var(--text-color-secondary)]">
+                    与普通区完全隔离的独立高级影视源搜索入口，支持自定义高级视频源与多源并行搜索。
+                </p>
             </div>
-        }>
-            <PremiumHomePage />
-        </Suspense>
+
+            <Suspense fallback={
+                <div className="min-h-screen flex items-center justify-center bg-black">
+                    <div className="animate-spin rounded-full h-16 w-16 border-4 border-[var(--accent-color)] border-t-transparent"></div>
+                </div>
+            }>
+                <PremiumHomePage />
+            </Suspense>
+
+            <Footer isPremiumMode />
+        </div>
     );
 }

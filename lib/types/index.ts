@@ -1,5 +1,5 @@
 /**
- * Core type definitions for KVideo platform
+ * Core type definitions for the VV影视 (VVideo) platform
  */
 
 // API Source Configuration

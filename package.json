@@ -1,6 +1,7 @@
 {
   "name": "kvideo",
   "version": "4.0.6",
+  "description": "VV影视 (VVideo) - 免费多源影视聚合搜索与在线播放平台",
   "private": true,
   "scripts": {
     "dev": "next dev",
