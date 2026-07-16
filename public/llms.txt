@@ -5,7 +5,7 @@
 ## 核心功能
 
 - 多源并行搜索：同时查询用户添加的多个视频源，取回电影/电视剧/动漫/综艺的搜索结果并合并排序
-- 在线播放：基于 HLS (.m3u8) 的网页播放器，支持选集、倍速、断点续播、字幕关闭广告片段等
+- 在线播放：基于 HLS (.m3u8) 的网页播放器，支持选集、倍速、断点续播、广告过滤等
 - 豆瓣热门推荐：首页展示豆瓣电影/电视剧热门榜单，点击可直接搜索
 - 自定义视频源与订阅源：用户可以添加/编辑/删除视频源，或订阅一个包含多个源的 JSON 列表并自动更新
 - 观看历史与收藏：本地记录播放进度，支持断点续播
@@ -20,11 +20,25 @@
 ## 关键页面
 
 - [首页 / 搜索](/)：多源影视搜索入口
-- [热门影视](/movies)：实时同步豆瓣热门/高分电影、电视剧、综艺榜单
+- [热门影视](/movies)：实时同步豆瓣热门/高分电影、电视剧、综艺榜单，附有导演/主演/评分等详情
 - [高级模式](/premium)：独立的高级内容搜索分区
-- [关于我们](/about)：产品介绍与团队信息
+- [关于我们](/about)：产品介绍与功能说明
 - [常见问题](/faq)：功能说明、常见问题解答
 
 ## 站点地图
 
-- [sitemap.xml](/sitemap.xml)
+- [sitemap.xml](/sitemap.xml)：包含首页、热门影视榜单、110+ 热门影视详情页、FAQ、关于页面的完整 URL 列表
+
+## AI 抓取授权声明
+
+以下 AI 检索引擎及智能助手爬虫均已在 robots.txt 中显式获得允许访问本站所有公开页面：
+
+- **OpenAI**（GPTBot / ChatGPT-User / OAI-SearchBot）：可引用本站内容作为 ChatGPT 检索来源
+- **Anthropic**（ClaudeBot / Claude-Web / anthropic-ai）：可引用本站内容作为 Claude 的检索与回答来源
+- **Perplexity**（PerplexityBot / Perplexity-User）：可抓取并引用本站内容用于 AI 答案生成
+- **Google**（Google-Extended）：可用于 Google Gemini / AI Overview 的训练与检索
+- **Apple**（Applebot-Extended）：可用于 Apple Intelligence 的知识检索
+- **Yandex**（YandexBot / Ya）：**Ya 爬虫（Yandex Alice AI / YandexGPT）可抓取并引用本站内容**，用于 Alice 智能助手及 YandexGPT 的知识库构建。本站影视聚合搜索功能及影视介绍内容可被 Alice 在相关查询中引用。
+- **ByteDance**（Bytespider）：可抓取本站内容
+
+如需机器可读格式的站点说明，请访问本文件（/llms.txt）。

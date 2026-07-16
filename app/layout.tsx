@@ -93,10 +93,17 @@ export const metadata: Metadata = {
     apple: '/icon.png',
   },
   verification: {
+    // Google Search Console: https://search.google.com/search-console
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
-    other: process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION
-      ? { 'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION }
-      : undefined,
+    // Yandex Webmaster: https://webmaster.yandex.com
+    // Generates: <meta name="yandex-verification" content="..." />
+    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION || undefined,
+    other: {
+      // Baidu Webmaster: https://ziyuan.baidu.com/site/index
+      ...(process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION
+        ? { 'baidu-site-verification': process.env.NEXT_PUBLIC_BAIDU_SITE_VERIFICATION }
+        : {}),
+    },
   },
 };
 

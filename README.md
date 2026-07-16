@@ -158,10 +158,34 @@ docker run -d -p 3000:3000 -e ACCESS_PASSWORD=your_premium_password --name kvide
 | `NEXT_PUBLIC_SITE_KEYWORDS` | SEO 关键词，逗号分隔 | 见 `lib/config/site-config.ts` |
 | `NEXT_PUBLIC_SITE_URL` | 规范站点域名（用于 canonical / sitemap / OG，末尾不要带 `/`） | `https://vv19.com` |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | Google Search Console 站点验证码 | 空 |
+| `NEXT_PUBLIC_YANDEX_VERIFICATION` | Yandex Webmaster 站点验证码 | 空 |
 | `NEXT_PUBLIC_BAIDU_SITE_VERIFICATION` | 百度站长平台站点验证码 | 空 |
+| `INDEXNOW_KEY` | IndexNow 密钥（UUID），用于向 Yandex/Bing 提交新页面即时收录 | 空 |
 | `PERSIST_PASSWORD` | 密码持久化 | `true` |
 
 > 部署到自己的域名时，请务必设置 `NEXT_PUBLIC_SITE_URL` 为你自己的域名，否则 sitemap、canonical、OpenGraph 链接会指向默认域名。
+
+### Yandex 站长验证步骤
+
+1. 登录 [Yandex Webmaster](https://webmaster.yandex.com/) 并添加站点 `https://vv19.com`
+2. 选择 **Meta 标签验证**，复制验证码（格式为一串十六进制字符串）
+3. 在 Cloudflare Pages 环境变量中添加：`NEXT_PUBLIC_YANDEX_VERIFICATION = <验证码>`
+4. 重新部署后，在 Yandex Webmaster 点击"验证"
+
+### IndexNow 快速收录（Yandex / Bing / Naver）
+
+[IndexNow](https://www.indexnow.org/) 协议允许在发布新内容后立即通知搜索引擎索引，无需等待爬虫自然发现：
+
+1. 生成一个 UUID 作为密钥（例如 https://www.uuidgenerator.net/）
+2. 在 Cloudflare Pages 环境变量中设置：`INDEXNOW_KEY = <你的UUID>`（**注意：不加 `NEXT_PUBLIC_` 前缀**，避免泄漏到客户端 JS）
+3. 重新部署后，验证密钥文件可访问：`https://vv19.com/indexnow-key.txt`
+4. 每次部署新内容后，在本机运行提交脚本：
+
+```bash
+INDEXNOW_KEY=<你的UUID> SITE_URL=https://vv19.com node scripts/submit-indexnow.mjs
+```
+
+脚本会自动读取 `sitemap.xml` 并批量提交所有 URL 到 Yandex、Bing 等引擎，大多数情况下几分钟内即可收录。
 
 ### 配置示例：
 
