@@ -88,7 +88,7 @@ export default function PremiumPage() {
                     {siteConfig.name} 高级专区 · 高级影视资源搜索
                 </h1>
                 <p className="mt-1 text-sm text-[var(--text-color-secondary)]">
-                    与普通区完全隔离的独立高级影视源搜索入口，支持自定义高级视频源与多源并行搜索。
+                    与普通区完全隔离的独立高级影视源搜索入口，免费高清多源并行搜索，支持自定义高级视频源。
                 </p>
             </div>
 

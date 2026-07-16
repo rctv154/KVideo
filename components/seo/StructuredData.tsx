@@ -98,6 +98,39 @@ export function FaqJsonLd({ items }: { items: FaqItem[] }) {
   return <JsonLdScript id="ld-faq" data={data} />;
 }
 
+export interface ItemListEntry {
+  name: string;
+  url: string;
+  image?: string;
+}
+
+/**
+ * ItemList schema for collection/hub pages (e.g. /movies). Deliberately
+ * uses the generic ItemList + CreativeWork shape rather than a strict
+ * Movie/TVSeries type, since we only have title/poster/rating from Douban's
+ * public API - claiming full Movie schema fields we don't actually have
+ * would be inaccurate structured data.
+ */
+export function ItemListJsonLd({ name, items }: { name: string; items: ItemListEntry[] }) {
+  const data = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'CreativeWork',
+        name: item.name,
+        url: item.url,
+        ...(item.image ? { image: item.image } : {}),
+      },
+    })),
+  };
+
+  return <JsonLdScript id="ld-itemlist" data={data} />;
+}
+
 /** BreadcrumbList schema for secondary pages, improves rich result display. */
 export function BreadcrumbJsonLd({ items }: { items: { name: string; url: string }[] }) {
   const data = {

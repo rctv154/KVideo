@@ -106,7 +106,7 @@ export default function Home() {
           {siteConfig.name} <span className="text-[var(--text-color-secondary)] font-normal">（{siteConfig.englishName}）</span> · 免费多源影视聚合搜索
         </h1>
         <p className="mt-1 text-sm text-[var(--text-color-secondary)]">
-          汇聚全网免费电影、电视剧、动漫、综艺资源，多源并行搜索，即搜即看，支持自定义视频源与订阅源管理。
+          汇聚全网免费高清电影、电视剧、动漫、综艺资源，多源并行搜索，即搜即看，内置智能去广告，支持自定义视频源与订阅源管理。
         </p>
       </div>
 

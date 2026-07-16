@@ -44,6 +44,12 @@ export function Navbar({ onReset, isPremiumMode = false }: NavbarProps) {
                         </Link>
 
                         <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            <Link
+                                href="/movies"
+                                className="hidden sm:flex items-center px-3 h-8 sm:h-10 rounded-[var(--radius-full)] bg-[var(--glass-bg)] border border-[var(--glass-border)] text-sm text-[var(--text-color)] hover:bg-[color-mix(in_srgb,var(--accent-color)_10%,transparent)] transition-all duration-200 cursor-pointer"
+                            >
+                                热门影视
+                            </Link>
                             <a
                                 href="https://github.com/KuekHaoYang/KVideo"
                                 target="_blank"

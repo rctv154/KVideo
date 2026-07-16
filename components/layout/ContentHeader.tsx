@@ -25,6 +25,7 @@ export function ContentHeader() {
                         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
                             <div className="hidden sm:flex items-center gap-4 text-sm text-[var(--text-color-secondary)]">
                                 <Link href="/" className="hover:text-[var(--accent-color)] transition-colors">首页</Link>
+                                <Link href="/movies" className="hover:text-[var(--accent-color)] transition-colors">热门影视</Link>
                                 <Link href="/premium" className="hover:text-[var(--accent-color)] transition-colors">高级模式</Link>
                                 <Link href="/about" className="hover:text-[var(--accent-color)] transition-colors">关于我们</Link>
                                 <Link href="/faq" className="hover:text-[var(--accent-color)] transition-colors">常见问题</Link>

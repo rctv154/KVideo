@@ -18,6 +18,7 @@ export function Footer({ isPremiumMode = false }: FooterProps) {
             <div className="bg-[var(--glass-bg)] border border-[var(--glass-border)] rounded-[var(--radius-2xl)] px-6 py-6 text-sm text-[var(--text-color-secondary)]">
                 <nav aria-label="footer" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-4">
                     <Link href="/" className="hover:text-[var(--accent-color)] transition-colors">首页</Link>
+                    <Link href="/movies" className="hover:text-[var(--accent-color)] transition-colors">热门影视</Link>
                     <Link href="/premium" className="hover:text-[var(--accent-color)] transition-colors">高级模式</Link>
                     <Link href="/about" className="hover:text-[var(--accent-color)] transition-colors">关于我们</Link>
                     <Link href="/faq" className="hover:text-[var(--accent-color)] transition-colors">常见问题</Link>
